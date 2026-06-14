@@ -1,5 +1,7 @@
-from gitsource import GithubRepositoryDataReader
+from gitsource import GithubRepositoryDataReader, chunk_documents
 from minsearch import Index
+
+
 
 
 def load_faq_data():
@@ -21,12 +23,16 @@ def load_faq_data():
     
     return documents
 
-def build_index(documents):
+def build_chunks(documents):
+    chunks = chunk_documents(documents, size=2000, step=1000)
+    return chunks
+
+def build_index(chunks):
     index = Index(
         text_fields=["content"],
         keyword_fields=["filename"]
     )
-    index.fit(documents)
+    index.fit(chunks)
     return index
 
 
